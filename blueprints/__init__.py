@@ -47,7 +47,7 @@ def after_request(response):
 # ================ Import and register Blueprint =================
 from blueprints.auth import bp_auth
 from blueprints.weather import bp_weather
-from blueprints.news import bp_news
+from blueprints.news.resources import bp_news
 
 app.register_blueprint(bp_auth, url_prefix='/auth')
 app.register_blueprint(bp_weather, url_prefix='/weather')
