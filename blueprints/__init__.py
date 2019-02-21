@@ -48,10 +48,12 @@ def after_request(response):
 from blueprints.auth import bp_auth
 from blueprints.weather import bp_weather
 from blueprints.news.resources import bp_news
+from blueprints.song.resources import bp_song
 
 app.register_blueprint(bp_auth, url_prefix='/auth')
 app.register_blueprint(bp_weather, url_prefix='/weather')
 app.register_blueprint(bp_news, url_prefix='/news')
+app.register_blueprint(bp_song)
 # ================================================================
 
 db.create_all()
