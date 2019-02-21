@@ -32,7 +32,7 @@ class PublicGetNews(Resource):
         
         return rows, 200, { "content-type": "application/json" }
 
-    @jwt_required
+    # @jwt_required
     def post(self):
         req = requests.get(self.base_url, params={'country': 'ID', 'apiKey': self.key})
         result = req.json()
