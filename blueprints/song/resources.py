@@ -75,13 +75,14 @@ class SongResource(Resource):
         parser.add_argument('format', location='args', default=None)
 
         args = parser.parse_args()
-
-        rq = requests.get(self.wio_host, params={'method': args['method'], 'tag' : args['tag'], 'format' : args['format'], 'api_key': self.wio_apikey})
-        song = rq.json()
-        for data in song['tracks']['track']:
-            songs = Songs(None, data['name'], data['artist']['name'], args['tag'])
-            db.session.add(songs)
-            db.session.commit()
+        list_genre = ["rock", "electronic", "seen live", "alternative", "indie", "pop", "female vocalists", "metal", "alternative rock", "jazz", "classic rock", "ambient", "experimental", "folk", "punk", "indie rock", "hard rock", "Hip-Hop", "instrumental", "singer-songwriter", "black metal", 	"dance", "80s", "Progressive rock", "death metal", "heavy metal", "hardcore", "british", "soul", "chillout", "electronica", "Classical", "industrial", "Soundtrack", "rap", "blues", "punk rock", "thrash metal", "90s", "acoustic", "metalcore", "psychedelic", "post-rock", "Progressive metal", "german", "funk", "hip hop", "new wave", "trance"]
+        for genre in list_genre :
+            rq = requests.get(self.wio_host, params={'method': args['method'], 'tag' : genre, 'format' : args['format'], 'api_key': self.wio_apikey})
+            song = rq.json()
+            for data in song['tracks']['track']:
+                songs = Songs(None, data['name'], data['artist']['name'], genre)
+                db.session.add(songs)
+                db.session.commit()
         return marshal(songs, Songs.response_fields), 200, { 'Content-Type': 'application/json' }
 
 class SongResourceAdmin(Resource):
