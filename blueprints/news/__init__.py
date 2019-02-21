@@ -7,11 +7,12 @@ class News(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
     publisher = db.Column(db.String(255))
     title = db.Column(db.String(255))
-    description = db.Column(db.String(255))
+    description = db.Column(db.String(2000))
     author = db.Column(db.String(255))
     published_at = db.Column(db.String(255))
     content = db.Column(db.String(1000))
     url = db.Column(db.String(255))
+    country = db.Column(db.String(255))
 
     response_field = {
         'id': fields.Integer,
@@ -21,10 +22,11 @@ class News(db.Model):
         'author': fields.String,
         'published_at': fields.String,
         'content': fields.String,
-        'url': fields.String
+        'url': fields.String,
+        'country' : fields.String
     }
 
-    def __init__(self, id, publisher, title, description, author, published_at, content, url):
+    def __init__(self, id, publisher, title, description, author, published_at, content, url, country):
         self.id = id
         self.publisher = publisher
         self.title = title
@@ -33,6 +35,7 @@ class News(db.Model):
         self.published_at = published_at
         self.content = content
         self.url = url
+        self.country = country
 
     def __repr__(self):
         return '<News %r>' % self.id
