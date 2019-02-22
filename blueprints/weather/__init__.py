@@ -13,7 +13,6 @@ class PublicGetCurrentWeather(Resource):
     wio_host = 'https://api.weatherbit.io/v2.0'
     wio_apikey = '001de4440e814c16bc45197fd601ef9d'
 
-    # @jwt_required
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('ip', location='args', default=None)
@@ -26,16 +25,6 @@ class PublicGetCurrentWeather(Resource):
         lon = geo['longitude']
         rq = requests.get(self.wio_host + '/current', params={'lat': lat, 'lon': lon,'key': self.wio_apikey})
         current = rq.json()
-
-        # return {
-        #     'kota': geo['city'],
-        #     'organisasi': geo['organization'],
-        #     'zona_waktu': geo['timezone'],
-        #     'cuaca_sekarang': {
-        #         'tanggal': current['data'][0]['datetime'],
-        #         'temperatur': current['data'][0]['temp']
-        #     }
-        # }
 
         return current
 

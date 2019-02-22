@@ -5,14 +5,14 @@ from flask_restful import fields
 class Clients(db.Model):
     __tablename__ = "client"
     client_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    client_key = db.Column(db.String(50))
-    client_secret = db.Column(db.String(50))
+    client_key = db.Column(db.String(50), unique=True)
+    client_secret = db.Column(db.String(50), unique=True)
     status = db.Column(db.String(50))
 
     response_field = {
         'client_id' : fields.Integer,
         'client_key' : fields.String,
-        'client_secret' : fields.Integer,
+        'client_secret' : fields.String,
         'status' : fields.String,
     }
 

@@ -41,10 +41,19 @@ class CoreResources(Resource):
         lat = geo['latitude']
         lon = geo['longitude']
         rq = requests.get(self.wio_host + '/current', params={'lat': lat, 'lon': lon,'key': self.wio_apikey})
-        current = rq.json()
+        weather = rq.json()
+        current = {
+            'timezone' : weather['data'][0]['timezone'],
+            'clouds' : weather['data'][0]['clouds'],
+            'datetime' : weather['data'][0]['datetime'],
+            'city' : weather['data'][0]['city_name'],
+            'weather' : weather['data'][0]['weather']['description'],
+            'temp' : weather['data'][0]['temp']
+        }
+
         self.current = current
 
-        weather_code = int(current['data'][0]['weather']['code'])
+        weather_code = int(weather['data'][0]['weather']['code'])
 
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
@@ -85,22 +94,35 @@ class CoreResources(Resource):
             if temp not in output:
                 output.append(temp)
         
-        return output
+        return {'RECOMENDED_SONGS': output}
 
     def get_news_list(self):
         news = PublicGetNews.get(PublicGetNews)
-        return news
+        list_news = []
+        for data in news :
+            filtered_news = {
+                'publisher' : news[0]['publisher'],
+                'title' : news[0]['title'],
+                'description' : news[0]['description'],
+                'author' : news[0]['author'],
+                'published_at' : news[0]['published_at'],
+                'content' : news[0]['content'],
+                'url' : news[0]['url']
+            } 
+            list_news.append(filtered_news)
+        return {'TOPNEWS': list_news}
 
     def get_joke_list(self):
         jokes = GetJokes.get(GetJokes)
         return jokes
 
+    @jwt_required
     def get(self):
         result = []
         news = self.get_news_list()
         jokes = self.get_joke_list()
         songs = self.get_recomend_music()
-        result.append(self.current)
+        result.append({'WEATHER_CONDITION': self.current})
         result.append(songs)
         result.append(jokes)
         result.append(news)

@@ -12,14 +12,13 @@ api = Api(bp_jokes)
 class GetJokes(Resource):
     wio_host = 'https://official-joke-api.appspot.com'
 
-    # @jwt_required
     def get(self):
         
         rq = requests.get(self.wio_host + '/random_joke')
         joke = rq.json()
 
         return {
-            'joke': joke['setup']+ " | " +joke['punchline']
+            'JOKE_OF_THE_DAY': joke['setup']+ " | " +joke['punchline']
         }
 
 api.add_resource(GetJokes, '')
