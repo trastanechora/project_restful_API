@@ -10,9 +10,6 @@ bp_client = Blueprint('client', __name__)
 api = Api(bp_client)
 
 class ClientResource(Resource):
-    
-    # clients = Clients()
-
     def __init__(self):
         pass
 
@@ -50,7 +47,6 @@ class ClientResource(Resource):
                 return marshal(qry, Clients.response_field)
             return {'status': 'NOT FOUND','message':'Client not found'}, 404, {'Content-Type':'application/json'}
 
-    # @jwt_required
     def post(self):
         parse = reqparse.RequestParser()
         parse.add_argument('client_key', location='json', required=True)

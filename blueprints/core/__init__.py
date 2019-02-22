@@ -3,7 +3,8 @@ from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from .. import *
 from ..song import Songs
-from ..news import *
+from ..news.resources import *
+from ..jokes import *
 import random
 
 import requests
@@ -41,6 +42,7 @@ class CoreResources(Resource):
         lon = geo['longitude']
         rq = requests.get(self.wio_host + '/current', params={'lat': lat, 'lon': lon,'key': self.wio_apikey})
         current = rq.json()
+        self.current = current
 
         weather_code = int(current['data'][0]['weather']['code'])
 
@@ -83,20 +85,26 @@ class CoreResources(Resource):
             if temp not in output:
                 output.append(temp)
         
-        return output, 200, { "content-type": "application/json" }
+        return output
 
     def get_news_list(self):
-        qry = News.query
-
-        rows = []
-        for row in qry.all():
-            rows.append(marshal(row, News.response_field))
-        
-        return rows, 200, { "content-type": "application/json" }
-
-    def get(self):
-        news = self.get_news_list()
+        news = PublicGetNews.get(PublicGetNews)
         return news
 
+    def get_joke_list(self):
+        jokes = GetJokes.get(GetJokes)
+        return jokes
+
+    def get(self):
+        result = []
+        news = self.get_news_list()
+        jokes = self.get_joke_list()
+        songs = self.get_recomend_music()
+        result.append(self.current)
+        result.append(songs)
+        result.append(jokes)
+        result.append(news)
+        return result
+        
 
 api.add_resource(CoreResources, '')

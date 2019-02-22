@@ -19,7 +19,7 @@ class GetJokes(Resource):
         joke = rq.json()
 
         return {
-            'joke': joke['setup']+joke['punchline']
+            'joke': joke['setup']+ " | " +joke['punchline']
         }
 
 api.add_resource(GetJokes, '')

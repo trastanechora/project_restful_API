@@ -15,7 +15,7 @@ class PublicGetNews(Resource):
     base_url = "https://newsapi.org/v2/top-headlines"
     key = "995ea15a75714a0496b4befa6ae915ef"
 
-    @jwt_required
+    # @jwt_required
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
@@ -36,7 +36,7 @@ class PublicGetNews(Resource):
             for row in qry.limit(args['rp']).offset(offset).all():
                 rows.append(marshal(row, News.response_field))
 
-            return rows, 200, { "content-type": "application/json" }
+            return rows
         else:
             return 'UNAUTORIZED', 500, { 'Content-Type': 'application/json' }
 
