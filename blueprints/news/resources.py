@@ -6,6 +6,7 @@ import json
 import requests
 from . import News
 from .. import db
+from ..client import Clients
 
 bp_news = Blueprint('news', __name__)
 api = Api(bp_news)
@@ -14,7 +15,7 @@ class PublicGetNews(Resource):
     base_url = "https://newsapi.org/v2/top-headlines"
     key = "995ea15a75714a0496b4befa6ae915ef"
 
-    # @jwt_required
+    @jwt_required
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('p', type=int, location='args', default=1)
@@ -27,24 +28,32 @@ class PublicGetNews(Resource):
         qry = News.query
 
         rows = []
-        for row in qry.limit(args['rp']).offset(offset).all():
-            rows.append(marshal(row, News.response_field))
-        
-        return rows, 200, { "content-type": "application/json" }
 
-    # @jwt_required
+        user = get_jwt_identity()
+        identity = marshal(user, Clients.response_field)
+
+        if identity['status'] == 'user' or 'admin':
+            for row in qry.limit(args['rp']).offset(offset).all():
+                rows.append(marshal(row, News.response_field))
+
+            return rows, 200, { "content-type": "application/json" }
+        else:
+            return 'UNAUTORIZED', 500, { 'Content-Type': 'application/json' }
+
+    @jwt_required
     def post(self):
         qry = News.query
         for data in qry:
             db.session.delete(data)
             db.session.commit()
-        country_list = ['ar', 'au', 'be', 'br', 'ca', 'ch', 'co', 'cu', 'de', 'fr', 'gb', 'id', 'ie', 'it', 'mx', 'nl', 'no', 'nz', 'pt', 'se', 'sg', 'us']
-        for country in country_list:
-            req = requests.get(self.base_url, params={'country': country, 'apiKey': self.key})
+        
+        user = get_jwt_identity()
+        identity = marshal(user, Clients.response_field)
+
+        if identity['status'] == 'admin':
+            req = requests.get(self.base_url, params={'country': 'id', 'apiKey': self.key})
             result = req.json()
-
             total_news = result["totalResults"]
-
             for news in result['articles']:
                 temp = {
                     'publisher': news['source']['name'],
@@ -54,13 +63,13 @@ class PublicGetNews(Resource):
                     'published_at': news['publishedAt'],
                     'content': news['content'],
                     'url': news['url'],
-                    'country': country
+                    'country': 'id'
                 }
-
-                berita = News(None, temp['publisher'], temp['title'], temp['description'], temp ['author'], temp['published_at'], temp['content'], temp['url'], temp['country'])
+                berita = News(None, temp['publisher'], temp['title'], temp['description'],temp ['author'], temp['published_at'], temp['content'], temp['url'], temp['country'])
                 db.session.add(berita)
-
-        db.session.commit()
-        return "OK", 200, { "content-type": "application/json" }
+                db.session.commit()
+            return "OK", 200, { "content-type": "application/json" }
+        else:
+            return 'UNAUTORIZED', 500, { 'Content-Type': 'application/json' }
 
 api.add_resource(PublicGetNews, '')
