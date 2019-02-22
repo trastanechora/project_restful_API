@@ -9,10 +9,10 @@ class Songs(db.Model):
     genre = db.Column(db.String(100))
 
     response_fields = {
-            'id': fields.Integer,
-            'title': fields.String,
-            'artist': fields.String,
-            'genre' : fields.String
+        'id': fields.Integer,
+        'title': fields.String,
+        'artist': fields.String,
+        'genre' : fields.String
     }
 
     def __init__(self, id, title, artist, genre):

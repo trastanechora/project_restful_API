@@ -32,26 +32,33 @@ class PublicGetNews(Resource):
         
         return rows, 200, { "content-type": "application/json" }
 
-    @jwt_required
+    # @jwt_required
     def post(self):
-        req = requests.get(self.base_url, params={'country': 'ID', 'apiKey': self.key})
-        result = req.json()
+        qry = News.query
+        for data in qry:
+            db.session.delete(data)
+            db.session.commit()
+        country_list = ['ar', 'au', 'be', 'br', 'ca', 'ch', 'co', 'cu', 'de', 'fr', 'gb', 'id', 'ie', 'it', 'mx', 'nl', 'no', 'nz', 'pt', 'se', 'sg', 'us']
+        for country in country_list:
+            req = requests.get(self.base_url, params={'country': country, 'apiKey': self.key})
+            result = req.json()
 
-        total_news = result["totalResults"]
+            total_news = result["totalResults"]
 
-        for news in result['articles']:
-            temp = {
-                'publisher': news['source']['name'],
-                'title': news['title'],
-                'description': news['description'],
-                'author': news['author'],
-                'published_at': news['publishedAt'],
-                'content': news['content'][:-15],
-                'url': news['url']
-            }
+            for news in result['articles']:
+                temp = {
+                    'publisher': news['source']['name'],
+                    'title': news['title'],
+                    'description': news['description'],
+                    'author': news['author'],
+                    'published_at': news['publishedAt'],
+                    'content': news['content'],
+                    'url': news['url'],
+                    'country': country
+                }
 
-            berita = News(None, temp['publisher'], temp['title'], temp['description'], temp['author'], temp['published_at'], temp['content'], temp['url'])
-            db.session.add(berita)
+                berita = News(None, temp['publisher'], temp['title'], temp['description'], temp ['author'], temp['published_at'], temp['content'], temp['url'], temp['country'])
+                db.session.add(berita)
 
         db.session.commit()
         return "OK", 200, { "content-type": "application/json" }

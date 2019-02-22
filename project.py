@@ -13,5 +13,10 @@ if __name__ == "__main__":
     log_handler.setLevel(logging.INFO)
     log_handler.setFormatter(formatter)
     app.logger.addHandler(log_handler)
-    app.run(debug=True, host='0.0.0.0', port=5555)
-# ================================================================
+    try:
+        if sys.argv[1] == 'db':
+            manager.run()
+        else:
+            app.run(debug=False, host='0.0.0.0', port=5555)
+    except IndexError as e:
+        app.run(debug=True, host='0.0.0.0', port=5555)
