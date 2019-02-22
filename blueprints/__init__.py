@@ -51,6 +51,7 @@ from blueprints.news.resources import bp_news
 from blueprints.song.resources import bp_song
 from blueprints.client.Resources import bp_client
 from blueprints.jokes import bp_jokes
+from blueprints.core import bp_core
 
 app.register_blueprint(bp_auth, url_prefix='/auth')
 app.register_blueprint(bp_weather, url_prefix='/weather')
@@ -58,7 +59,7 @@ app.register_blueprint(bp_news, url_prefix='/news')
 app.register_blueprint(bp_song)
 app.register_blueprint(bp_client, url_prefix='/client')
 app.register_blueprint(bp_jokes, url_prefix='/jokes')
-# ================================================================
+app.register_blueprint(bp_core, url_prefix='/')
 
 db.create_all()
 
