@@ -37,15 +37,15 @@ class PublicGetCurrentWeather(Resource):
         #     }
         # }
 
-        # return current
+        return current
         # return geo
-        return {
-            'country_code': current['data'][0]['country_code'],
-            'city_name': current['data'][0]['city_name'],
-            'weather_code': current['data'][0]['weather']['code'],
-            'weather_desc': current['data'][0]['weather']['description'],
-            'temp': current['data'][0]['temp']
-        }
+        # return {
+        #     'country_code': current['data'][0]['country_code'],
+        #     'city_name': current['data'][0]['city_name'],
+        #     'weather_code': current['data'][0]['weather']['code'],
+        #     'weather_desc': current['data'][0]['weather']['description'],
+        #     'temp': current['data'][0]['temp']
+        # }
         # return geo
 
 api.add_resource(PublicGetCurrentWeather, '')
