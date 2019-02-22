@@ -17,14 +17,6 @@ class PublicGetNews(Resource):
 
     @jwt_required
     def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('p', type=int, location='args', default=1)
-        parser.add_argument('rp', type=int, location='args', default=5)
-        parser.add_argument('name', type=str, location='args')
-        args = parser.parse_args()
-
-        offset = (args['p'] * args['rp']) - args['rp']
-
         qry = News.query
 
         rows = []
@@ -33,10 +25,10 @@ class PublicGetNews(Resource):
         identity = marshal(user, Clients.response_field)
 
         if identity['status'] == 'user' or 'admin':
-            for row in qry.limit(args['rp']).offset(offset).all():
+            for row in qry.all():
                 rows.append(marshal(row, News.response_field))
 
-            return rows, 200, { "content-type": "application/json" }
+            return rows
         else:
             return 'UNAUTORIZED', 500, { 'Content-Type': 'application/json' }
 

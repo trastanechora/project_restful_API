@@ -14,10 +14,9 @@ class CreateTokenResources(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('client_key', location='json', required=True)
         parser.add_argument('client_secret', location='json', required=True)
-        parser.add_argument('status', location='json', required=True)
         args = parser.parse_args()
 
-        qry = Clients.query.filter_by(client_key = args['client_key']).filter_by(client_secret = args['client_secret']).filter_by(status = args['status']).first()
+        qry = Clients.query.filter_by(client_key = args['client_key']).filter_by(client_secret = args['client_secret']).first()
 
         if qry is not None:
             token = create_access_token(identity = marshal(qry, Clients.response_field))
