@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask_restful import Api, Resource, reqparse, marshal
 from .. import *
 from ..song import Songs
+from ..news import *
 import random
 
 import requests
@@ -28,7 +29,7 @@ class CoreResources(Resource):
         "rock", "electronic", "alternative", "indie", "pop", "metal", "alternative rock", "experimental", "folk", "punk", "indie rock", "hard rock", "Hip-Hop", "instrumental", "black metal", "dance", "Progressive rock", "death metal", "heavy metal", "hardcore", "electronica", "Classical", "industrial", "Soundtrack", "rap", "punk rock", "thrash metal", "90s", "metalcore", "psychedelic", "post-rock", "Progressive metal", "german", "funk", "hip hop", "new wave", "trance"
     ]
 
-    def get(self):
+    def get_recomend_music(self):
         parser = reqparse.RequestParser()
         parser.add_argument('ip', location='args', default=None)
         args = parser.parse_args()
@@ -83,5 +84,19 @@ class CoreResources(Resource):
                 output.append(temp)
         
         return output, 200, { "content-type": "application/json" }
+
+    def get_news_list(self):
+        qry = News.query
+
+        rows = []
+        for row in qry.all():
+            rows.append(marshal(row, News.response_field))
+        
+        return rows, 200, { "content-type": "application/json" }
+
+    def get(self):
+        news = self.get_news_list()
+        return news
+
 
 api.add_resource(CoreResources, '')

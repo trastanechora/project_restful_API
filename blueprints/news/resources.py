@@ -38,7 +38,7 @@ class PublicGetNews(Resource):
         for data in qry:
             db.session.delete(data)
             db.session.commit()
-        country_list = ['ar', 'au', 'be', 'br', 'ca', 'ch', 'co', 'cu', 'de', 'fr', 'gb', 'id', 'ie', 'it', 'mx', 'nl', 'no', 'nz', 'pt', 'se', 'sg', 'us']
+        country_list = ['ar', 'au', 'be', 'ca', 'ch', 'co', 'de', 'fr', 'gb', 'id', 'ie', 'it', 'mx', 'nl', 'no', 'nz', 'pt', 'se', 'sg', 'us']
         for country in country_list:
             req = requests.get(self.base_url, params={'country': country, 'apiKey': self.key})
             result = req.json()
